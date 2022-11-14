@@ -40,6 +40,13 @@ def on_connect(client, userdata, flags, rc):
     # Suscribierse al topico relativo al sistema de vuelo
     # Suscribierse al topico relativo a la luz
     # Suscribierse al topico relativo al sistema de motores
+    client.subscribe("actuadores/volar")
+    client.subscribe("actuadores/luces/1")
+    client.subscribe("actuadores/motores/1")
+    client.subscribe("actuadores/motores/2")
+    client.subscribe("actuadores/motores/3")
+    client.subscribe("actuadores/motores/4")
+    
 
 def mqtt_connect():
     if client.is_connected() is False:
@@ -89,7 +96,7 @@ def ws_luz_event(data):
     # Realizar el publish de data al topico correspondiente
     # Colocar un breakpoint dentro de esta funcion si lo requiere
     # para debuggear como llega la información de data
-    pass
+    client.publish("actuadores/luces/1", int(data))
 
 
 @socketio.on('volar_event')
@@ -113,7 +120,10 @@ def ws_motores_event(data):
     # de cada motor a su respectivo tópico.
     # Colocar un breakpoint dentro de esta funcion si lo requiere
     # para debuggear como llega la información de data
-    pass
+    client.publish("actuadores/motores/1", int(data[0]))
+    client.publish("actuadores/motores/2", int(data[1]))
+    client.publish("actuadores/motores/3", int(data[2]))
+    client.publish("actuadores/motores/4", int(data[3]))
 
 
 @socketio.on('joystick_event')
@@ -130,6 +140,7 @@ def ws_joystick_event(data):
 
 
 if __name__ == "__main__":
+
     client.on_connect = on_connect
     client.on_message = on_message
 
