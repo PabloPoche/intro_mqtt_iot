@@ -42,12 +42,9 @@ def on_connect(client, userdata, flags, rc):
     # Suscribierse al topico relativo al sistema de motores
     client.subscribe("actuadores/volar")
     client.subscribe("actuadores/luces/1")
-    client.subscribe("actuadores/motores/1")
-    client.subscribe("actuadores/motores/2")
-    client.subscribe("actuadores/motores/3")
-    client.subscribe("actuadores/motores/4")
+    client.subscribe("actuadores/motores/#")
+    client.subscribe("actuadores/joystick")
     
-
 def mqtt_connect():
     if client.is_connected() is False:
         try:
@@ -78,6 +75,7 @@ def on_message(client, userdata, msg):
         socketio.emit('motor_3', int(value))
     if topic == "actuadores/motores/4":
         socketio.emit('motor_4', int(value))
+    
 
 
 # ---- Endpoints ----
@@ -136,8 +134,10 @@ def ws_joystick_event(data):
     # en JSTON String
     # Colocar un breakpoint dentro de esta funcion si lo requiere
     # para debuggear como llega la información de data    
-    pass
-
+    valor = json.dumps(data)
+    print(valor)
+    client.publish("actuadores/joystick", valor)
+    
 
 if __name__ == "__main__":
 
